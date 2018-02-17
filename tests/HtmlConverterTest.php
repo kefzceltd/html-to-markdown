@@ -77,6 +77,9 @@ class HtmlConverterTest extends \PHPUnit_Framework_TestCase
         $this->html_gives_markdown('<b>Bold</b><i>Italic</i>', '**Bold**_Italic_');
         $this->html_gives_markdown('<em>This is <strong>a test</strong></em>', '_This is **a test**_');
         $this->html_gives_markdown('<em>This is </em><strong>a </strong>test', '_This is_ **a** test');
+        $this->html_gives_markdown('Emphasis with no<em> </em>text<strong> preserves</strong> spaces.', 'Emphasis with no text **preserves** spaces.');
+        $this->html_gives_markdown("Emphasis discards<em> \n</em>line breaks", "Emphasis discards line breaks");
+        $this->html_gives_markdown("Emphasis preserves<em><br/></em>HTML breaks", "Emphasis preserves  \nHTML breaks");
     }
 
     public function test_nesting()
@@ -165,9 +168,19 @@ class HtmlConverterTest extends \PHPUnit_Framework_TestCase
 
     public function test_preformat()
     {
-        $this->html_gives_markdown("<pre>test\ntest\r\ntest</pre>", "```\ntest" . PHP_EOL . 'test' . PHP_EOL . "test\n```");
-        $this->html_gives_markdown("<pre>test\n\ttab\r\n</pre>", "```\ntest" . PHP_EOL . "\ttab" . PHP_EOL . "\n```");
+        $this->html_gives_markdown("<pre>test\ntest\r\ntest</pre>", "```\ntest" . PHP_EOL .'test'. PHP_EOL .'test'. PHP_EOL .'```');
+        $this->html_gives_markdown("<pre>test\ntest\r\ntest\n</pre>", "```\ntest" . PHP_EOL .'test'. PHP_EOL .'test'. PHP_EOL .'```');
+        $this->html_gives_markdown("<pre>test\n\ttab\r\n</pre>", "```\ntest" . PHP_EOL . "\ttab" . PHP_EOL . '```');
         $this->html_gives_markdown('<pre>  one line with spaces  </pre>', '`  one line with spaces  `');
+        $this->html_gives_markdown("<pre></pre>", "```\n```");
+        $this->html_gives_markdown("<pre></pre><pre></pre>", "```\n```\n```\n```");
+        $this->html_gives_markdown("<pre>\n</pre>", "```\n" . PHP_EOL . '```');
+        $this->html_gives_markdown("<pre>foo\n</pre>", "```\nfoo" . PHP_EOL . '```');
+        $this->html_gives_markdown("<pre>\nfoo</pre>", "```\n" . PHP_EOL . 'foo' . PHP_EOL . '```');
+        $this->html_gives_markdown("<pre>\nfoo\n</pre>", "```\n" . PHP_EOL . 'foo' . PHP_EOL . '```');
+        $this->html_gives_markdown("<pre>\n\n</pre>", "```\n" . PHP_EOL . PHP_EOL . '```');
+        $this->html_gives_markdown("<pre>\n\n\n</pre>", "```\n" . PHP_EOL . PHP_EOL . PHP_EOL . '```');
+        $this->html_gives_markdown("<pre>\n</pre><pre>\n</pre>", "```\n" . PHP_EOL. "```\n```\n" . PHP_EOL . '```');
     }
 
     public function test_blockquotes()
