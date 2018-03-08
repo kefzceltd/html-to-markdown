@@ -35,7 +35,7 @@
         "ext-xml": "*"
     },
     "require-dev": {
-        "mikehaertl/php-shellcommand": "~1.1.0",
+        "mikehaertl/php-shellcommand": "~1.1.0|~1.4.0",
         "phpunit/phpunit": "4.*|7.*",
         "scrutinizer/ocular": "~1.1"
     },
